@@ -24,7 +24,7 @@ public class MongoDbConnection {
         CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
-//                .codecRegistry(codecRegistry)
+                .codecRegistry(codecRegistry)
                 .build();
         MongoClient mongoClient = MongoClients.create(clientSettings);
 

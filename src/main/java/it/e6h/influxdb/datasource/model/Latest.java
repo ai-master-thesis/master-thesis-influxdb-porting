@@ -2,7 +2,8 @@ package it.e6h.influxdb.datasource.model;
 
 import org.bson.types.ObjectId;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.Instant;
 import java.util.Objects;
 
 public class Latest {
@@ -64,4 +65,16 @@ public class Latest {
     public int hashCode() {
         return Objects.hash(id, value, timestamp);
     }
+
+    public it.e6h.influxdb.model.Latest toInfluxPojo() {
+        String id = this.id.toString();
+        String value = this.value;
+        //TODO Fix Bson Date type decoded to null
+        Instant timestamp = null;
+        if(this.timestamp != null)
+            timestamp = this.timestamp.toInstant();
+
+        return new it.e6h.influxdb.model.Latest(id, value, timestamp);
+    }
+
 }

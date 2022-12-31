@@ -9,23 +9,23 @@ import java.util.Objects;
 @Measurement(name="latest")
 public class Latest {
     @Column(tag = true)
-    private Long id;
+    private String id;
     @Column
     private String value;
     @Column(timestamp = true)
     private Instant timestamp;
 
-    public Latest(Long id, String value, Instant timestamp) {
+    public Latest(String id, String value, Instant timestamp) {
         this.id = id;
         this.value = value;
         this.timestamp = timestamp;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

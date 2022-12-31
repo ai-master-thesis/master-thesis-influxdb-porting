@@ -6,18 +6,20 @@ import com.influxdb.client.domain.WritePrecision;
 import it.e6h.influxdb.model.Latest;
 
 import java.time.Instant;
-import java.util.Date;
+import java.util.List;
 
 public class InfluxDbWrite {
 
-    public static void write(InfluxDBClient influxClient) {
+    public static void write(InfluxDBClient influxClient, List<Latest> influxSeries) {
         try {
             WriteApiBlocking writeApi = influxClient.getWriteApiBlocking();
 
             //XXX mock
-            Latest data = new Latest(123L, "value", Instant.now());
+            Latest data = new Latest("123", "value", Instant.now());
 
             writeApi.writeMeasurement(WritePrecision.MS, data);
+
+            //TODO Write influxSeries
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
