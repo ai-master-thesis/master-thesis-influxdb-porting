@@ -15,9 +15,10 @@ public class InfluxDbWrite {
             WriteApiBlocking writeApi = influxClient.getWriteApiBlocking();
 
             //XXX mock
-            Latest data = new Latest("123", "value", Instant.now());
+//            Latest data = new Latest("123", "value", Instant.now());
+//            writeApi.writeMeasurement(WritePrecision.MS, data);
 
-            writeApi.writeMeasurement(WritePrecision.MS, data);
+            writeApi.writeMeasurement(WritePrecision.MS, influxSeries.get(0));
 
             //TODO Write influxSeries
         } catch(Exception e) {

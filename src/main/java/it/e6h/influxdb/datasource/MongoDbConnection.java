@@ -7,7 +7,6 @@ import com.mongodb.client.MongoClients;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +16,14 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 public class MongoDbConnection {
 
-    @NotNull
     public static MongoClient connect() {
         ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
-        CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
-        CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
+
+//        MongoClientSettings clientSettings = confPojo(connectionString);
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
-                .codecRegistry(codecRegistry)
                 .build();
+
         MongoClient mongoClient = MongoClients.create(clientSettings);
 
         List<Document> databases = mongoClient.listDatabases().into(new ArrayList<>());
@@ -33,4 +31,17 @@ public class MongoDbConnection {
 
         return mongoClient;
     }
+
+    private static MongoClientSettings confPojo(ConnectionString connectionString) {
+        CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
+        CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
+
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(connectionString)
+                .codecRegistry(codecRegistry)
+                .build();
+
+        return settings;
+    }
+
 }
