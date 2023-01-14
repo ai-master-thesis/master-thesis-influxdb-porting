@@ -32,7 +32,7 @@ public class MongoDbConnection {
         MongoClient mongoClient = MongoClients.create(clientSettings);
 
         List<Document> databases = mongoClient.listDatabases().into(new ArrayList<>());
-        databases.forEach(db -> logger.debug(Constants.LOG_MARKER, db.toJson()));
+        databases.forEach(db -> logger.debug(db.toJson()));
 
         return mongoClient;
     }

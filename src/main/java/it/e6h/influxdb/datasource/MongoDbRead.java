@@ -1,8 +1,10 @@
 package it.e6h.influxdb.datasource;
 
+import com.mongodb.client.ListCollectionsIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import it.e6h.influxdb.Constants;
 import it.e6h.influxdb.datasource.model.Latest;
 import org.bson.Document;
 
@@ -15,15 +17,47 @@ public class MongoDbRead {
         try  {
             MongoDatabase smcTelemetryDB = mongoClient.getDatabase("smactory-telemetry");
 
-            MongoCollection<Document> latest52Collection = smcTelemetryDB.getCollection("latest_52_1231_289");
+            //XXX Mock
+//            MongoCollection<Document> latest52Collection = smcTelemetryDB.getCollection("latest_52_1231_289");
+//            latest52Collection.find().into(docs);
 
-            List<Document> docs = new ArrayList<>();
-            latest52Collection.find().into(docs);
+            List<MongoCollection<Document>> targetCollections = getTargetCollections(smcTelemetryDB);
+
+            List<Document> docs = getDocuments(targetCollections);
 
             return docs;
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static List<MongoCollection<Document>> getTargetCollections(MongoDatabase db) {
+        ListCollectionsIterable<Document> allCollections = db.listCollections();
+
+        List<MongoCollection<Document>> targetCollections = new ArrayList<>();
+        for(Document col: allCollections) {
+            String colName = col.getString("name");
+            if(colName.contains("_" + Constants.TARGET_GROUP + "_")) {
+                targetCollections.add(db.getCollection(colName));
+            }
+
+            //XXX
+//            if(targetCollections.size() >= 2)
+//                break;
+        }
+        return targetCollections;
+    }
+
+    private static List<Document> getDocuments(List<MongoCollection<Document>> collections) {
+        List<Document> docs = new ArrayList<>();
+        List<Document> result = new ArrayList<>();
+
+        for(MongoCollection<Document> col: collections) {
+            col.find().into(docs);
+            result.addAll(docs);
+        }
+
+        return result;
     }
 
     public static List<Latest> readAsPojo(MongoClient mongoClient) {
@@ -40,4 +74,5 @@ public class MongoDbRead {
             throw new RuntimeException(e);
         }
     }
+
 }
