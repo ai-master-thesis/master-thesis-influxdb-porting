@@ -21,9 +21,9 @@ public class MongoDbRead {
 //            MongoCollection<Document> latest52Collection = smcTelemetryDB.getCollection("latest_52_1231_289");
 //            latest52Collection.find().into(docs);
 
-            List<MongoCollection<Document>> targetCollections = getTargetCollections(smcTelemetryDB);
+            MongoCollection<Document> targetCollection = getTargetCollection(smcTelemetryDB);
 
-            List<Document> docs = getDocuments(targetCollections);
+            List<Document> docs = getDocuments(targetCollection);
 
             return docs;
         } catch(Exception e) {
@@ -31,7 +31,23 @@ public class MongoDbRead {
         }
     }
 
-    private static List<MongoCollection<Document>> getTargetCollections(MongoDatabase db) {
+    private static MongoCollection<Document> getTargetCollection(MongoDatabase smcTelemetryDB) {
+        String name = String.format("sensor_data_%s", Constants.TARGET_GROUP);
+        return smcTelemetryDB.getCollection(name);
+    }
+
+    private static List<Document> getDocuments(MongoCollection<Document> collection) {
+        List<Document> docs = new ArrayList<>();
+
+        collection.find()
+                .limit(100) //XXX
+                .into(docs);
+
+        return docs;
+    }
+
+    //XXX Not used
+    private static List<MongoCollection<Document>> getLatestCollections(MongoDatabase db) {
         ListCollectionsIterable<Document> allCollections = db.listCollections();
 
         List<MongoCollection<Document>> targetCollections = new ArrayList<>();
@@ -48,7 +64,8 @@ public class MongoDbRead {
         return targetCollections;
     }
 
-    private static List<Document> getDocuments(List<MongoCollection<Document>> collections) {
+    //XXX Not used
+    private static List<Document> getDocumentsFromCollections(List<MongoCollection<Document>> collections) {
         List<Document> docs = new ArrayList<>();
         List<Document> result = new ArrayList<>();
 
@@ -60,6 +77,7 @@ public class MongoDbRead {
         return result;
     }
 
+    //XXX Not used
     public static List<Latest> readAsPojo(MongoClient mongoClient) {
         try  {
             MongoDatabase smcTelemetryDB = mongoClient.getDatabase("smactory-telemetry");
