@@ -66,15 +66,4 @@ public class Latest {
         return Objects.hash(id, value, timestamp);
     }
 
-    public it.e6h.influxdb.model.Latest toInfluxPojo() {
-        String id = this.id.toString();
-        String value = this.value;
-        //TODO Fix Bson Date type decoded to null
-        Instant timestamp = null;
-        if(this.timestamp != null)
-            timestamp = this.timestamp.toInstant();
-
-        return new it.e6h.influxdb.model.Latest(id, value, timestamp);
-    }
-
 }

@@ -6,10 +6,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import it.e6h.influxdb.Constants;
 import it.e6h.influxdb.datasource.model.Latest;
+import it.e6h.influxdb.model.ValueType;
 import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class MongoDbRead {
 
@@ -23,7 +26,9 @@ public class MongoDbRead {
 
             MongoCollection<Document> targetCollection = getTargetCollection(smcTelemetryDB);
 
-            List<Document> docs = getDocuments(targetCollection);
+            //XXX
+            List<Document> docs = getSelectedDocuments(targetCollection);
+//            List<Document> docs = getAllDocuments(targetCollection);
 
             return docs;
         } catch(Exception e) {
@@ -36,12 +41,22 @@ public class MongoDbRead {
         return smcTelemetryDB.getCollection(name);
     }
 
-    private static List<Document> getDocuments(MongoCollection<Document> collection) {
+    private static List<Document> getAllDocuments(MongoCollection<Document> collection) {
         List<Document> docs = new ArrayList<>();
 
-        collection.find()
-                .limit(100) //XXX
-                .into(docs);
+        collection.find().into(docs);
+
+        return docs;
+    }
+
+    private static List<Document> getSelectedDocuments(MongoCollection<Document> collection) {
+        List<Document> docs = new ArrayList<>();
+        int l = 100;
+
+        for(ValueType type: ValueType.values())
+            collection.find(eq("type", type))
+                    .limit(l)
+                    .into(docs);
 
         return docs;
     }

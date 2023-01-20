@@ -6,7 +6,7 @@ import com.influxdb.client.WriteOptions;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.events.AbstractWriteEvent;
 import com.influxdb.client.write.events.EventListener;
-import it.e6h.influxdb.model.Latest;
+import it.e6h.influxdb.model.SensorData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class InfluxDbWrite {
     private static Logger logger = LoggerFactory.getLogger(InfluxDbWrite.class);
 
-    public static void write(InfluxDBClient influxClient, List<Latest> influxSeries) {
+    public static void write(InfluxDBClient influxClient, List<SensorData> influxSeries) {
         try {
             // Example with blocking API
 //            WriteApiBlocking writeApi = influxClient.getWriteApiBlocking();
