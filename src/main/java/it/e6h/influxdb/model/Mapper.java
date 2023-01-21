@@ -2,11 +2,14 @@ package it.e6h.influxdb.model;
 
 import it.e6h.influxdb.Constants;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
 public class Mapper {
+    private static Logger logger = LoggerFactory.getLogger(Mapper.class);
 
     public static SensorData documentToInfluxPojo(Document doc) {
         SensorData sensorData = null;
@@ -18,7 +21,10 @@ public class Mapper {
         Instant timestamp = doc.getDate(Constants.BSON_TIMESTAMP_KEY).toInstant();
 
         String value = doc.getString(Constants.BSON_VALUE_KEY);
-        ValueType type = ValueType.valueOf(doc.getString(Constants.BSON_TYPE_KEY));
+        String typeString = doc.getString(Constants.BSON_TYPE_KEY);
+        ValueType type = ValueType.UNKNOWN;
+        if(typeString != null)
+            type = ValueType.valueOf(typeString);
         switch(type) {
             case NUMERIC:
                 BigDecimal bdV = new BigDecimal(value);
@@ -48,6 +54,17 @@ public class Mapper {
                         property,
                         timestamp,
                         boolV
+                );
+                break;
+            case UNKNOWN:
+                logger.warn(Constants.LOG_MARKER, "Detected doc with unknown type: " + doc);
+                String v = value;
+                sensorData = new StringValue(
+                        bsonId,
+                        itemId,
+                        property,
+                        timestamp,
+                        v
                 );
                 break;
         }

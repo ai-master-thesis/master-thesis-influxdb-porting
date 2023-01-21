@@ -27,8 +27,8 @@ public class MongoDbRead {
             MongoCollection<Document> targetCollection = getTargetCollection(smcTelemetryDB);
 
             //XXX
-            List<Document> docs = getSelectedDocuments(targetCollection);
-//            List<Document> docs = getAllDocuments(targetCollection);
+//            List<Document> docs = getSelectedDocuments(targetCollection);
+            List<Document> docs = getAllDocuments(targetCollection);
 
             return docs;
         } catch(Exception e) {

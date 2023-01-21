@@ -1,5 +1,5 @@
 package it.e6h.influxdb.model;
 
 public enum ValueType {
-    NUMERIC, STRING, BOOLEAN
+    NUMERIC, STRING, BOOLEAN, UNKNOWN
 }
