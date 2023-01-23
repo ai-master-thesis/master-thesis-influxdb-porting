@@ -7,7 +7,7 @@ public class Constants {
     public static final String LOG_MARKER_STRING = "E6H";
     public static final Marker LOG_MARKER = MarkerFactory.getMarker(LOG_MARKER_STRING);
 
-    public static final char[] TOKEN = "QXuKJNPK2W30Kmke-UzRYTUxUpsxUgvnwezavfy00jG-a3dwmagKgLEDYfHHnXN4J3AIaUlrFiqvXjhM75UOPA==".toCharArray();
+    public static final char[] TOKEN = "XVmIGzd8vvXlPvIuDD6KXYMo-UOGoWd8yOYBW2HhwOQ3Bhoq6_8Krs-1ix-lWH38_Cs4uSglALamXkZETJXjgg==".toCharArray();
     public static final String ORG = "E6H";
     public static final String BUCKET = "sensor_data_52";
 
