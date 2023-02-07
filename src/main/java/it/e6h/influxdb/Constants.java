@@ -10,6 +10,8 @@ public class Constants {
     public static final char[] TOKEN = "XVmIGzd8vvXlPvIuDD6KXYMo-UOGoWd8yOYBW2HhwOQ3Bhoq6_8Krs-1ix-lWH38_Cs4uSglALamXkZETJXjgg==".toCharArray();
     public static final String ORG = "E6H";
     public static final String BUCKET = "sensor_data_52";
+    public static final String BUCKET_EX = "ex";
+
 
     public static final String HOST = "http://localhost:8086";
 
