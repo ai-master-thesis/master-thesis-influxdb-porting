@@ -11,8 +11,8 @@ public class NumericValue extends SensorData {
     @Column
     private BigDecimal value;
 
-    public NumericValue(String bsonId, Long itemId, String property, Instant timestamp, BigDecimal value) {
-        super(bsonId, itemId, property, timestamp);
+    public NumericValue(Long itemId, String property, Instant timestamp, BigDecimal value) {
+        super(itemId, property, timestamp);
         this.value = value;
     }
 
@@ -26,8 +26,7 @@ public class NumericValue extends SensorData {
     @Override
     public String toString() {
         return "NumericValue{" +
-                "bsonId='" + getBsonId() + '\'' +
-                ", itemId='" + getItemId() + '\'' +
+                "itemId='" + getItemId() + '\'' +
                 ", property='" + getProperty() + '\'' +
                 ", timestamp=" + getTimestamp() + '\'' +
                 ", value=" + value +

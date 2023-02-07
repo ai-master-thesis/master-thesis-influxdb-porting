@@ -14,7 +14,6 @@ public class Mapper {
     public static SensorData documentToInfluxPojo(Document doc) {
         SensorData sensorData = null;
 
-        String bsonId = doc.getObjectId(Constants.BSON_ID_KEY).toString();
         Long itemId = doc.getLong(Constants.BSON_ITEM_ID_KEY);
         String property = doc.getString(Constants.BSON_PROPERTY_KEY);
 
@@ -29,7 +28,6 @@ public class Mapper {
             case NUMERIC:
                 BigDecimal bdV = new BigDecimal(value);
                 sensorData = new NumericValue(
-                        bsonId,
                         itemId,
                         property,
                         timestamp,
@@ -39,7 +37,6 @@ public class Mapper {
             case STRING:
                 String stringV = value;
                 sensorData = new StringValue(
-                        bsonId,
                         itemId,
                         property,
                         timestamp,
@@ -49,7 +46,6 @@ public class Mapper {
             case BOOLEAN:
                 Boolean boolV = Boolean.parseBoolean(value);
                 sensorData = new BooleanValue(
-                        bsonId,
                         itemId,
                         property,
                         timestamp,
@@ -60,7 +56,6 @@ public class Mapper {
                 logger.warn(Constants.LOG_MARKER, "Detected doc with unknown type: " + doc);
                 String v = value;
                 sensorData = new StringValue(
-                        bsonId,
                         itemId,
                         property,
                         timestamp,

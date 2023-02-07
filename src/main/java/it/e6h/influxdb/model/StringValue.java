@@ -10,8 +10,8 @@ public class StringValue extends SensorData {
     @Column
     private String value;
 
-    public StringValue(String bsonId, Long itemId, String property, Instant timestamp, String value) {
-        super(bsonId, itemId, property, timestamp);
+    public StringValue(Long itemId, String property, Instant timestamp, String value) {
+        super(itemId, property, timestamp);
         this.value = value;
     }
 
@@ -25,8 +25,7 @@ public class StringValue extends SensorData {
     @Override
     public String toString() {
         return "StringValue{" +
-                "bsonId='" + getBsonId() + '\'' +
-                ", itemId='" + getItemId() + '\'' +
+                "itemId='" + getItemId() + '\'' +
                 ", property='" + getProperty() + '\'' +
                 ", timestamp=" + getTimestamp() + '\'' +
                 ", value=" + value +

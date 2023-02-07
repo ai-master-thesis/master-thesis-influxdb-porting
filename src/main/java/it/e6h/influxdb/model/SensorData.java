@@ -9,8 +9,6 @@ import java.util.Objects;
 @Measurement(name="sensor_data")
 public abstract class SensorData {
     @Column(tag = true)
-    private String bsonId;
-    @Column(tag = true)
     private Long itemId;
     @Column(tag = true)
     private String property;
@@ -18,18 +16,10 @@ public abstract class SensorData {
     @Column(timestamp = true)
     private Instant timestamp;
 
-    public SensorData(String bsonId, Long itemId, String property, Instant timestamp) {
-        this.bsonId = bsonId;
+    public SensorData(Long itemId, String property, Instant timestamp) {
         this.itemId = itemId;
         this.property = property;
         this.timestamp = timestamp;
-    }
-
-    public String getBsonId() {
-        return bsonId;
-    }
-    public void setBsonId(String bsonId) {
-        this.bsonId = bsonId;
     }
 
     public Long getItemId() {
@@ -69,8 +59,7 @@ public abstract class SensorData {
     @Override
     public String toString() {
         return "SensorData{" +
-                "bsonId='" + bsonId + '\'' +
-                ", itemId='" + itemId + '\'' +
+                "itemId='" + itemId + '\'' +
                 ", property='" + property + '\'' +
                 ", timestamp=" + timestamp +
                 '}';

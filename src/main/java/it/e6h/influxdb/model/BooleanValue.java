@@ -10,8 +10,8 @@ public class BooleanValue extends SensorData {
     @Column
     private Boolean value;
 
-    public BooleanValue(String bsonId, Long itemId, String property, Instant timestamp, Boolean value) {
-        super(bsonId, itemId, property, timestamp);
+    public BooleanValue(Long itemId, String property, Instant timestamp, Boolean value) {
+        super(itemId, property, timestamp);
         this.value = value;
     }
 
@@ -25,8 +25,7 @@ public class BooleanValue extends SensorData {
     @Override
     public String toString() {
         return "BooleanValue{" +
-                "bsonId='" + getBsonId() + '\'' +
-                ", itemId='" + getItemId() + '\'' +
+                "itemId='" + getItemId() + '\'' +
                 ", property='" + getProperty() + '\'' +
                 ", timestamp=" + getTimestamp() + '\'' +
                 ", value=" + value +
