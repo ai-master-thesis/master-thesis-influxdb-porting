@@ -13,9 +13,9 @@ public class Constants {
     public static final String BUCKET_EX = "ex";
     public static final String BUCKET_FILTER = "sensor_data_52_1233_Photocell";
 
-
     public static final String HOST = "http://localhost:8086";
 
+    public static final String MONGO_DB_REMOTE = "smactory-telemetry";
     public static final String BSON_ID_KEY = "_id";
     public static final String BSON_ITEM_ID_KEY = "itemId";
     public static final String BSON_PROPERTY_KEY = "property";
@@ -23,8 +23,11 @@ public class Constants {
     public static final String BSON_TYPE_KEY = "type";
     public static final String BSON_VALUE_KEY = "value";
 
+    public static final String MONGO_DB_LOCAL = "smc-telemetry";
+
     public static final String TARGET_GROUP = "52";
     public static final Long TARGET_ITEM_ID = 1233L;
     public static final String TARGET_PROPERTY = "Photocell";
+    public static final Long TARGET_PROPERTY_ID = 5L;
 
 }

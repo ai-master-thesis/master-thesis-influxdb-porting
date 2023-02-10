@@ -21,8 +21,8 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 public class MongoDbConnection {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static MongoClient connect() {
-        ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
+    public static MongoClient connect(String connectionStringRaw) {
+        ConnectionString connectionString = new ConnectionString(connectionStringRaw);
 
 //        MongoClientSettings clientSettings = confPojo(connectionString);
         MongoClientSettings clientSettings = MongoClientSettings.builder()

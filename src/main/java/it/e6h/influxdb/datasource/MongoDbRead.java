@@ -21,7 +21,7 @@ public class MongoDbRead {
 
     public static List<Document> readAsDocument(MongoClient mongoClient) {
         try  {
-            MongoDatabase smcTelemetryDB = mongoClient.getDatabase("smactory-telemetry");
+            MongoDatabase smcTelemetryDB = mongoClient.getDatabase(Constants.MONGO_DB_REMOTE);
 
             //XXX Mock
 //            MongoCollection<Document> latest52Collection = smcTelemetryDB.getCollection("latest_52_1231_289");
@@ -31,8 +31,8 @@ public class MongoDbRead {
 
             //XXX
 //            List<Document> docs = getSelectedDocuments(targetCollection);
-//            List<Document> docs = getAllDocuments(targetCollection);
-            List<Document> docs = getByItemIdAndProperty(targetCollection);
+            List<Document> docs = getAllDocuments(targetCollection);
+//            List<Document> docs = getByItemIdAndProperty(targetCollection);
 
             return docs;
         } catch(Exception e) {
@@ -42,7 +42,9 @@ public class MongoDbRead {
 
 
     private static MongoCollection<Document> getTargetCollection(MongoDatabase smcTelemetryDB) {
-        String name = String.format("sensor_data_%s", Constants.TARGET_GROUP);
+        //XXX
+//        String name = String.format("sensor_data_%s", Constants.TARGET_GROUP);
+        String name = String.format("latest_%s_%s_%s", Constants.TARGET_GROUP, Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY_ID);
         return smcTelemetryDB.getCollection(name);
     }
 
