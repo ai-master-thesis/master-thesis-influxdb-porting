@@ -11,17 +11,20 @@ public class Constants {
     public static final String ORG = "E6H";
     public static final String BUCKET = "sensor_data_52";
     public static final String BUCKET_EX = "ex";
+    public static final String BUCKET_FILTER = "sensor_data_52_1233_Photocell";
 
 
     public static final String HOST = "http://localhost:8086";
 
     public static final String BSON_ID_KEY = "_id";
-    public static final Object BSON_ITEM_ID_KEY = "itemId";
-    public static final Object BSON_PROPERTY_KEY = "property";
+    public static final String BSON_ITEM_ID_KEY = "itemId";
+    public static final String BSON_PROPERTY_KEY = "property";
     public static final String BSON_TIMESTAMP_KEY = "timestamp";
-    public static final Object BSON_TYPE_KEY = "type";
+    public static final String BSON_TYPE_KEY = "type";
     public static final String BSON_VALUE_KEY = "value";
 
     public static final String TARGET_GROUP = "52";
+    public static final Long TARGET_ITEM_ID = 1233L;
+    public static final String TARGET_PROPERTY = "Photocell";
 
 }

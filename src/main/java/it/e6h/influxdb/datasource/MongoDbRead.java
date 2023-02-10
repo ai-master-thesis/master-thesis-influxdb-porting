@@ -8,11 +8,14 @@ import it.e6h.influxdb.Constants;
 import it.e6h.influxdb.datasource.model.Latest;
 import it.e6h.influxdb.model.ValueType;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Sorts.ascending;
 
 public class MongoDbRead {
 
@@ -28,13 +31,15 @@ public class MongoDbRead {
 
             //XXX
 //            List<Document> docs = getSelectedDocuments(targetCollection);
-            List<Document> docs = getAllDocuments(targetCollection);
+//            List<Document> docs = getAllDocuments(targetCollection);
+            List<Document> docs = getByItemIdAndProperty(targetCollection);
 
             return docs;
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 
     private static MongoCollection<Document> getTargetCollection(MongoDatabase smcTelemetryDB) {
         String name = String.format("sensor_data_%s", Constants.TARGET_GROUP);
@@ -57,6 +62,21 @@ public class MongoDbRead {
             collection.find(eq("type", type))
                     .limit(l)
                     .into(docs);
+
+        return docs;
+    }
+
+    private static List<Document> getByItemIdAndProperty(MongoCollection<Document> collection) {
+        List<Document> docs = new ArrayList<>();
+
+        Bson filter = and(
+                eq(Constants.BSON_TYPE_KEY, ValueType.NUMERIC),
+                eq(Constants.BSON_ITEM_ID_KEY, Constants.TARGET_ITEM_ID),
+                eq(Constants.BSON_PROPERTY_KEY, Constants.TARGET_PROPERTY));
+
+        collection.find(filter)
+                .sort(ascending(Constants.BSON_TIMESTAMP_KEY))
+                .into(docs);
 
         return docs;
     }

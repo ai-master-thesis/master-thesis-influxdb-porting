@@ -33,7 +33,7 @@ public class Main {
 
         logger.debug(Constants.LOG_MARKER, "Number of InfluxDB points = " + influxSeries.size());
 
-        InfluxDBClient influxClient = InfluxDbConnection.connect(Constants.HOST, Constants.TOKEN, Constants.BUCKET, Constants.ORG);
+        InfluxDBClient influxClient = InfluxDbConnection.connect(Constants.HOST, Constants.TOKEN, Constants.BUCKET_FILTER, Constants.ORG);
         InfluxDbWrite.write(influxClient, influxSeries);
     }
 
