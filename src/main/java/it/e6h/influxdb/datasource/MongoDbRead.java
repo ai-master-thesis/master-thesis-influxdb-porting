@@ -48,7 +48,7 @@ public class MongoDbRead {
         return smcTelemetryDB.getCollection(name);
     }
 
-    private static List<Document> getAllDocuments(MongoCollection<Document> collection) {
+    public static List<Document> getAllDocuments(MongoCollection<Document> collection) {
         List<Document> docs = new ArrayList<>();
 
         collection.find().into(docs);
@@ -130,4 +130,8 @@ public class MongoDbRead {
         }
     }
 
+    public static MongoCollection<Document> getLatestTargetCollection(MongoDatabase smcTelemetryDB) {
+        String name = String.format("latest_%s_%s_%s", Constants.TARGET_GROUP, Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY_ID);
+        return smcTelemetryDB.getCollection(name);
+    }
 }

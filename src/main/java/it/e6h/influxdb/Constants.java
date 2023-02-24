@@ -1,7 +1,10 @@
 package it.e6h.influxdb;
 
+import org.openjdk.jmh.annotations.Mode;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 public class Constants {
     public static final String LOG_MARKER_STRING = "E6H";
@@ -29,5 +32,17 @@ public class Constants {
     public static final Long TARGET_ITEM_ID = 1233L;
     public static final String TARGET_PROPERTY = "Photocell";
     public static final Long TARGET_PROPERTY_ID = 5L;
+
+    // Benchmark
+    public static final class BenchmarkParams {
+        public static final int FORKS = 1;
+        public static final int THREADS = 1;
+        public static final Mode MODE = Mode.SingleShotTime;
+        public static final int WARMUP_ITERATIONS = 1;
+        public static final int WARMUP_BATCH_SIZE = 10;
+        public static final int MEASUREMENT_ITERATIONS = 3;
+        public static final int MEASUREMENT_BATCH_SIZE = 5;
+        public static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
+    }
 
 }
