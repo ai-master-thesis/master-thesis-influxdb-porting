@@ -1,41 +1,31 @@
 package it.e6h.influxdb;
 
 import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.WriteApi;
-import com.influxdb.client.WriteOptions;
-import com.influxdb.client.domain.WritePrecision;
-import com.influxdb.client.write.events.AbstractWriteEvent;
-import com.influxdb.client.write.events.EventListener;
-import it.e6h.influxdb.model.SensorData;
+import com.influxdb.client.QueryApi;
+import com.influxdb.query.FluxRecord;
+import com.influxdb.query.FluxTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class InfluxDbWrite {
-    private static Logger logger = LoggerFactory.getLogger(InfluxDbWrite.class);
+public class InfluxDbRead {
+    private static Logger logger = LoggerFactory.getLogger(InfluxDbRead.class);
 
-    public static void write(InfluxDBClient influxClient, List<SensorData> influxSeries) {
+    public static List<FluxRecord> getLatest(InfluxDBClient influxClient) {
         try {
-            // Example with blocking API
-//            WriteApiBlocking writeApi = influxClient.getWriteApiBlocking();
-//            Latest data = new Latest("123", "value", Instant.now());
-//            writeApi.writeMeasurement(WritePrecision.MS, data);
+            String flux = new String(
+                    InfluxDbRead.class.getClassLoader().getResourceAsStream("query_latest.flux").readAllBytes());
+            QueryApi queryApi = influxClient.getQueryApi();
 
-            // Asynchronous API
-            WriteApi writeApi = influxClient.makeWriteApi(
-                    WriteOptions.builder().build()
-            );
+            List<FluxTable> tables = queryApi.query(flux);
 
-            EventListener<AbstractWriteEvent> listener = new InfluxDbEventListener();
-            writeApi.listenEvents(AbstractWriteEvent.class, listener);
+            List<FluxRecord> records = new ArrayList<>();
+            for (FluxTable fluxTable : tables)
+                records.addAll(fluxTable.getRecords());
 
-            writeApi.writeMeasurements(WritePrecision.MS, influxSeries);
-
-            synchronized(listener) {
-                listener.wait();
-            }
-
+            return records;
         }
         catch(Exception e) {
             throw new RuntimeException(e);
