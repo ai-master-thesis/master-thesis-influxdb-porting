@@ -19,15 +19,13 @@ import static com.mongodb.client.model.Sorts.ascending;
 
 public class MongoDbRead {
 
-    public static List<Document> readAsDocument(MongoClient mongoClient) {
+    public static List<Document> readAsDocument(MongoDatabase db) {
         try  {
-            MongoDatabase smcTelemetryDB = mongoClient.getDatabase(Constants.MONGO_DB_REMOTE);
-
             //XXX Mock
 //            MongoCollection<Document> latest52Collection = smcTelemetryDB.getCollection("latest_52_1231_289");
 //            latest52Collection.find().into(docs);
 
-            MongoCollection<Document> targetCollection = getTargetCollection(smcTelemetryDB);
+            MongoCollection<Document> targetCollection = getTargetCollection(db);
 
             //XXX
 //            List<Document> docs = getSelectedDocuments(targetCollection);
