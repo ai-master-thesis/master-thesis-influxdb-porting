@@ -29,22 +29,10 @@ public class Main {
         }
 
         switch(args[0]) {
-            case "r":
-                mongoClient = MongoDbConnection.connect(System.getProperty("mongodb.remote.uri"));
-                mongoDb = mongoClient.getDatabase(Constants.MONGO_DB_REMOTE);
-                break;
-            case "l":
+            case "p":
                 mongoClient = MongoDbConnection.connect(System.getProperty("mongodb.local.uri"));
                 mongoDb = mongoClient.getDatabase(Constants.MONGO_DB_LOCAL);
-                break;
-            default:
-                logger.error(Constants.LOG_MARKER, "Invalid CL arguments");
-        }
-
-        influxClient = InfluxDbConnection.connect(Constants.HOST, Constants.TOKEN, Constants.BUCKET_LATEST, Constants.ORG);
-        
-        switch(args[1]) {
-            case "p":
+                influxClient = InfluxDbConnection.connect(Constants.HOST, Constants.TOKEN, Constants.BUCKET_LATEST, Constants.ORG);
                 porting();
                 break;
             case "b":

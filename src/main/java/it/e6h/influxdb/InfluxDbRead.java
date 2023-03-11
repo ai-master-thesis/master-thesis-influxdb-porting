@@ -13,10 +13,34 @@ import java.util.List;
 public class InfluxDbRead {
     private static Logger logger = LoggerFactory.getLogger(InfluxDbRead.class);
 
-    public static List<FluxRecord> getLatest(InfluxDBClient influxClient) {
+    public static List<FluxRecord> getAll(InfluxDBClient influxClient, String bucketName) {
         try {
             String flux = new String(
-                    InfluxDbRead.class.getClassLoader().getResourceAsStream("query_latest.flux").readAllBytes());
+                    InfluxDbRead.class.getClassLoader().getResourceAsStream("query_all.flux").readAllBytes());
+            flux = String.format(flux, bucketName);
+
+            QueryApi queryApi = influxClient.getQueryApi();
+
+            List<FluxTable> tables = queryApi.query(flux);
+
+            List<FluxRecord> records = new ArrayList<>();
+            for (FluxTable fluxTable : tables)
+                records.addAll(fluxTable.getRecords());
+
+            return records;
+        }
+        catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<FluxRecord> getTopByItemIdAndProperty(InfluxDBClient influxClient, String bucketName) {
+        try {
+            String flux = new String(InfluxDbRead.class.getClassLoader().getResourceAsStream(
+                    "query_top_byItemIdAndProperty.flux").readAllBytes());
+            flux = String.format(flux, bucketName,
+                    Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY, Constants.TARGET_RECORDS_N);
+
             QueryApi queryApi = influxClient.getQueryApi();
 
             List<FluxTable> tables = queryApi.query(flux);

@@ -16,6 +16,7 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.ascending;
+import static com.mongodb.client.model.Sorts.descending;
 
 public class MongoDbRead {
 
@@ -66,7 +67,7 @@ public class MongoDbRead {
         return docs;
     }
 
-    private static List<Document> getByItemIdAndProperty(MongoCollection<Document> collection) {
+    public static List<Document> getByItemIdAndProperty(MongoCollection<Document> collection) {
         List<Document> docs = new ArrayList<>();
 
         Bson filter = and(
@@ -76,6 +77,22 @@ public class MongoDbRead {
 
         collection.find(filter)
                 .sort(ascending(Constants.BSON_TIMESTAMP_KEY))
+                .into(docs);
+
+        return docs;
+    }
+
+    public static List<Document> getTopByItemIdAndProperty(MongoCollection<Document> collection) {
+        List<Document> docs = new ArrayList<>();
+
+        Bson filter = and(
+                eq(Constants.BSON_TYPE_KEY, ValueType.NUMERIC),
+                eq(Constants.BSON_ITEM_ID_KEY, Constants.TARGET_ITEM_ID),
+                eq(Constants.BSON_PROPERTY_KEY, Constants.TARGET_PROPERTY));
+
+        collection.find(filter)
+                .sort(descending(Constants.BSON_TIMESTAMP_KEY))
+                .limit(Constants.TARGET_RECORDS_N)
                 .into(docs);
 
         return docs;

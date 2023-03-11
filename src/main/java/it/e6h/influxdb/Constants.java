@@ -7,7 +7,7 @@ import org.slf4j.MarkerFactory;
 import java.util.concurrent.TimeUnit;
 
 public class Constants {
-    public static final int CL_ARGS_N = 2;
+    public static final int CL_ARGS_N = 1;
 
     public static final String LOG_MARKER_STRING = "E6H";
     public static final Marker LOG_MARKER = MarkerFactory.getMarker(LOG_MARKER_STRING);
@@ -35,6 +35,7 @@ public class Constants {
     public static final Long TARGET_ITEM_ID = 1233L;
     public static final String TARGET_PROPERTY = "Photocell";
     public static final Long TARGET_PROPERTY_ID = 5L;
+    public static final int TARGET_RECORDS_N = 100;
 
     // Benchmark
     public static final class BenchmarkParams {

@@ -44,23 +44,28 @@ public class MyBenchmark {
 
     @State(Scope.Benchmark)
     public static class MongoDbConf {
-        public MongoClient mongoClient = MongoDbConnection.connect(System.getProperty("mongodb.local.uri"));
-        public String db = Constants.MONGO_DB_LOCAL;
+        public String connectionString = System.getProperty("mongodb.local.uri");
+        public String dbName = Constants.MONGO_DB_LOCAL;
+        public String latestCollectionName = String.format("latest_%s_%s_%s",
+                Constants.TARGET_GROUP, Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY_ID);
+        public String sensorDataCollectionName = String.format("sensor_data_%s", Constants.TARGET_GROUP);
     }
 
     @State(Scope.Benchmark)
     public static class InfluxDbConf {
-        public InfluxDBClient influxClient = InfluxDbConnection.connect(Constants.HOST, Constants.TOKEN, Constants.BUCKET_FILTER, Constants.ORG);
+        public String latestBucketName = String.format("latest_%s_%s_%s",
+                Constants.TARGET_GROUP, Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY_ID);
+        public String sensorDataBucketName = String.format("sensor_data_%s", Constants.TARGET_GROUP);
     }
 
     @Benchmark
-    public static List<Document> readLatestFromMongoDb(MongoDbConf mongoDbConf) {
+    public static List<Document> mongoReadFromLatest(MongoDbConf mongoDbConf) {
         try  {
-            MongoDatabase smcTelemetryDB = mongoDbConf.mongoClient.getDatabase(mongoDbConf.db);
+            MongoClient client = MongoDbConnection.connect(mongoDbConf.connectionString);
+            MongoDatabase db = client.getDatabase(mongoDbConf.dbName);
+            MongoCollection<Document> collection = db.getCollection(mongoDbConf.latestCollectionName);
 
-            MongoCollection<Document> targetCollection = MongoDbRead.getLatestTargetCollection(smcTelemetryDB);
-
-            List<Document> docs = MongoDbRead.getAllDocuments(targetCollection);
+            List<Document> docs = MongoDbRead.getAllDocuments(collection);
             logger.debug(Constants.LOG_MARKER, "Number of read BSON documents = " + docs.size());
 
             return docs;
@@ -70,9 +75,43 @@ public class MyBenchmark {
     }
 
     @Benchmark
-    public static List<FluxRecord> readLatestFromInfluxDb(InfluxDbConf influxDbConf) {
+    public static List<Document> mongoReadFromSensorData(MongoDbConf mongoDbConf) {
         try  {
-            List<FluxRecord> records = InfluxDbRead.getLatest(influxDbConf.influxClient);
+            MongoClient client = MongoDbConnection.connect(mongoDbConf.connectionString);
+            MongoDatabase db = client.getDatabase(mongoDbConf.dbName);
+            MongoCollection<Document> collection = db.getCollection(mongoDbConf.sensorDataCollectionName);
+
+            List<Document> docs = MongoDbRead.getTopByItemIdAndProperty(collection);
+            logger.debug(Constants.LOG_MARKER, "Number of read BSON documents = " + docs.size());
+
+            return docs;
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Benchmark
+    public static List<FluxRecord> influxReadFromLatest(InfluxDbConf influxDbConf) {
+        try  {
+            InfluxDBClient client = InfluxDbConnection.connect(
+                    Constants.HOST, Constants.TOKEN, influxDbConf.latestBucketName, Constants.ORG);
+
+            List<FluxRecord> records = InfluxDbRead.getAll(client, influxDbConf.latestBucketName);
+            logger.debug(Constants.LOG_MARKER, "Number of read Flux records = " + records.size());
+
+            return records;
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Benchmark
+    public static List<FluxRecord> influxReadFromSensorData(InfluxDbConf influxDbConf) {
+        try  {
+            InfluxDBClient client = InfluxDbConnection.connect(
+                    Constants.HOST, Constants.TOKEN, influxDbConf.sensorDataBucketName, Constants.ORG);
+
+            List<FluxRecord> records = InfluxDbRead.get100ByItemIdAndProperty(client, influxDbConf.sensorDataBucketName);
             logger.debug(Constants.LOG_MARKER, "Number of read Flux records = " + records.size());
 
             return records;
