@@ -111,7 +111,7 @@ public class MyBenchmark {
             InfluxDBClient client = InfluxDbConnection.connect(
                     Constants.HOST, Constants.TOKEN, influxDbConf.sensorDataBucketName, Constants.ORG);
 
-            List<FluxRecord> records = InfluxDbRead.get100ByItemIdAndProperty(client, influxDbConf.sensorDataBucketName);
+            List<FluxRecord> records = InfluxDbRead.getTopByItemIdAndProperty(client, influxDbConf.sensorDataBucketName);
             logger.debug(Constants.LOG_MARKER, "Number of read Flux records = " + records.size());
 
             return records;
