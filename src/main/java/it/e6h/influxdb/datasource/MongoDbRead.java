@@ -82,13 +82,21 @@ public class MongoDbRead {
         return docs;
     }
 
-    public static List<Document> getTopByItemIdAndProperty(MongoCollection<Document> collection) {
+    public static List<Document> getTopByItemIdAndProperty(
+            MongoCollection<Document> collection,
+            ValueType type, Long itemId, String property) {
         List<Document> docs = new ArrayList<>();
 
-        Bson filter = and(
-                eq(Constants.BSON_TYPE_KEY, ValueType.NUMERIC),
-                eq(Constants.BSON_ITEM_ID_KEY, Constants.TARGET_ITEM_ID),
-                eq(Constants.BSON_PROPERTY_KEY, Constants.TARGET_PROPERTY));
+        Bson filter;
+        if(type != null)
+            filter = and(
+                    eq(Constants.BSON_TYPE_KEY, type),
+                    eq(Constants.BSON_ITEM_ID_KEY, itemId),
+                    eq(Constants.BSON_PROPERTY_KEY, property));
+        else
+            filter = and(
+                    eq(Constants.BSON_ITEM_ID_KEY, itemId),
+                    eq(Constants.BSON_PROPERTY_KEY, property));
 
         collection.find(filter)
                 .sort(descending(Constants.BSON_TIMESTAMP_KEY))

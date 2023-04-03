@@ -10,6 +10,7 @@ import it.e6h.influxdb.InfluxDbConnection;
 import it.e6h.influxdb.InfluxDbRead;
 import it.e6h.influxdb.datasource.MongoDbConnection;
 import it.e6h.influxdb.datasource.MongoDbRead;
+import it.e6h.influxdb.model.ValueType;
 import org.bson.Document;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
@@ -23,20 +24,20 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class MyBenchmark {
-    private static Logger logger = LoggerFactory.getLogger(MyBenchmark.class);
+public class InfRetrievalBenchmark {
+    private static Logger logger = LoggerFactory.getLogger(InfRetrievalBenchmark.class);
 
     public static void run() throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(MyBenchmark.class.getSimpleName())
-                .forks(Constants.BenchmarkParams.FORKS)
-                .threads(Constants.BenchmarkParams.THREADS)
-                .mode(Constants.BenchmarkParams.MODE)
-                .warmupIterations(Constants.BenchmarkParams.WARMUP_ITERATIONS)
-                .warmupBatchSize(Constants.BenchmarkParams.WARMUP_BATCH_SIZE)
-                .measurementIterations(Constants.BenchmarkParams.MEASUREMENT_ITERATIONS)
-                .measurementBatchSize(Constants.BenchmarkParams.MEASUREMENT_BATCH_SIZE)
-                .timeUnit(Constants.BenchmarkParams.TIME_UNIT)
+                .include(InfRetrievalBenchmark.class.getSimpleName())
+                .forks(Constants.InfRetrievalBenchmarkParams.FORKS)
+                .threads(Constants.InfRetrievalBenchmarkParams.THREADS)
+                .mode(Constants.InfRetrievalBenchmarkParams.MODE)
+                .warmupIterations(Constants.InfRetrievalBenchmarkParams.WARMUP_ITERATIONS)
+                .warmupBatchSize(Constants.InfRetrievalBenchmarkParams.WARMUP_BATCH_SIZE)
+                .measurementIterations(Constants.InfRetrievalBenchmarkParams.MEASUREMENT_ITERATIONS)
+                .measurementBatchSize(Constants.InfRetrievalBenchmarkParams.MEASUREMENT_BATCH_SIZE)
+                .timeUnit(Constants.InfRetrievalBenchmarkParams.TIME_UNIT)
                 .build();
 
         new Runner(opt).run();
@@ -81,7 +82,10 @@ public class MyBenchmark {
             MongoDatabase db = client.getDatabase(mongoDbConf.dbName);
             MongoCollection<Document> collection = db.getCollection(mongoDbConf.sensorDataCollectionName);
 
-            List<Document> docs = MongoDbRead.getTopByItemIdAndProperty(collection);
+            List<Document> docs = MongoDbRead.getTopByItemIdAndProperty(collection,
+                    ValueType.NUMERIC,
+                    Constants.TARGET_ITEM_ID,
+                    Constants.TARGET_PROPERTY);
             logger.debug(Constants.LOG_MARKER, "Number of read BSON documents = " + docs.size());
 
             return docs;

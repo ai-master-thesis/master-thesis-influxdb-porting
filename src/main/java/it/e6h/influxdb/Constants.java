@@ -1,6 +1,7 @@
 package it.e6h.influxdb;
 
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.runner.options.TimeValue;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -38,7 +39,7 @@ public class Constants {
     public static final int TARGET_RECORDS_N = 100;
 
     // Benchmark
-    public static final class BenchmarkParams {
+    public static final class InfRetrievalBenchmarkParams {
         public static final int FORKS = 1;
         public static final int THREADS = 1;
         public static final Mode MODE = Mode.SingleShotTime;
@@ -46,6 +47,16 @@ public class Constants {
         public static final int WARMUP_BATCH_SIZE = 10;
         public static final int MEASUREMENT_ITERATIONS = 3;
         public static final int MEASUREMENT_BATCH_SIZE = 5;
+        public static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
+    }
+    public static final class ResConsumptionBenchmarkParams {
+        public static final int FORKS = 1;
+        public static final int THREADS = 1;
+        public static final Mode MODE = Mode.Throughput;
+        public static final int WARMUP_ITERATIONS = 1;
+        public static final TimeValue WARMUP_TIME = new TimeValue(30L, TimeUnit.SECONDS);
+        public static final int MEASUREMENT_ITERATIONS = 3;
+        public static final TimeValue MEASUREMENT_TIME = new TimeValue(90L, TimeUnit.SECONDS);;
         public static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
     }
 

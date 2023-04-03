@@ -3,7 +3,8 @@ package it.e6h.influxdb;
 import com.influxdb.client.InfluxDBClient;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import it.e6h.influxdb.benchmark.MyBenchmark;
+import it.e6h.influxdb.benchmark.InfRetrievalBenchmark;
+import it.e6h.influxdb.benchmark.MongoResConsumptionBenchmark;
 import it.e6h.influxdb.datasource.MongoDbConnection;
 import it.e6h.influxdb.datasource.MongoDbRead;
 import it.e6h.influxdb.model.Mapper;
@@ -35,8 +36,14 @@ public class Main {
                 influxClient = InfluxDbConnection.connect(Constants.HOST, Constants.TOKEN, Constants.BUCKET_LATEST, Constants.ORG);
                 porting();
                 break;
-            case "b":
-                benchmarking(args);
+            case "bir":
+                InfRetrievalBenchmark.run();
+                break;
+            case "bmongorc":
+                MongoResConsumptionBenchmark.run();
+                break;
+            case "binfluxrc":
+//TODO                InfluxResConsumptionBenchmark.run();
                 break;
             default:
                 logger.error(Constants.LOG_MARKER, "Invalid CL arguments");
@@ -67,13 +74,6 @@ public class Main {
         }
 
         return influxSeries;
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    private static void benchmarking(String[] args) throws RunnerException {
-//XXX        org.openjdk.jmh.Main.main(args); //starts the benchmarking process
-        MyBenchmark.run(); //starts the benchmarking process
     }
 
 }
