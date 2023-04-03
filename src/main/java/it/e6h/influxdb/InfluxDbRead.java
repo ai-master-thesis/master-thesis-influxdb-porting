@@ -56,4 +56,26 @@ public class InfluxDbRead {
         }
     }
 
+    public static List<FluxRecord> getTopByItemIdAndPropertyRC(InfluxDBClient client, String bucketName,
+                                                               Long itemId, String property) {
+        try {
+            String flux = new String(InfluxDbRead.class.getClassLoader().getResourceAsStream(
+                    "query_top_byItemIdAndProperty_rc.flux").readAllBytes());
+            flux = String.format(flux, bucketName,
+                    itemId, property, Constants.TARGET_RECORDS_N);
+
+            QueryApi queryApi = client.getQueryApi();
+
+            List<FluxTable> tables = queryApi.query(flux);
+
+            List<FluxRecord> records = new ArrayList<>();
+            for (FluxTable fluxTable : tables)
+                records.addAll(fluxTable.getRecords());
+
+            return records;
+        }
+        catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

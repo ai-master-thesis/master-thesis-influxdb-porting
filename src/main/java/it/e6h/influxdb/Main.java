@@ -4,6 +4,7 @@ import com.influxdb.client.InfluxDBClient;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import it.e6h.influxdb.benchmark.InfRetrievalBenchmark;
+import it.e6h.influxdb.benchmark.InfluxResConsumptionBenchmark;
 import it.e6h.influxdb.benchmark.MongoResConsumptionBenchmark;
 import it.e6h.influxdb.datasource.MongoDbConnection;
 import it.e6h.influxdb.datasource.MongoDbRead;
@@ -43,7 +44,7 @@ public class Main {
                 MongoResConsumptionBenchmark.run();
                 break;
             case "binfluxrc":
-//TODO                InfluxResConsumptionBenchmark.run();
+                InfluxResConsumptionBenchmark.run();
                 break;
             default:
                 logger.error(Constants.LOG_MARKER, "Invalid CL arguments");
