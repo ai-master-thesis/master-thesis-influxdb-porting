@@ -2,3 +2,4 @@
 target/
 docker-compose.yml
 src/main/resources/sensor_data_52-propByItem.jsonl
+src/main/resources/secret.properties
