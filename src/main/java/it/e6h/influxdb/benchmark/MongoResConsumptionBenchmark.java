@@ -49,7 +49,7 @@ public class MongoResConsumptionBenchmark {
 
         @Setup(Level.Trial)
         public void doSetup() {
-            String connectionString = System.getProperty("mongodb.local.uri");
+            String connectionString = Constants.MONGO_LOCAL_CON_STR;
             String dbName = Constants.MONGO_DB_LOCAL;
             String sensorDataCollectionName = String.format("sensor_data_%s", Constants.TARGET_GROUP);
             MongoClient client = MongoDbConnection.connect(connectionString);

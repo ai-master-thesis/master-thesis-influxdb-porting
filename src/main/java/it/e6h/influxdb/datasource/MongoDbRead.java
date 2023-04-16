@@ -20,64 +20,21 @@ import static com.mongodb.client.model.Sorts.descending;
 
 public class MongoDbRead {
 
-    public static List<Document> readAsDocument(MongoDatabase db) {
+    public static List<Document> readAsDocument(MongoDatabase db, String targetCollectionName) {
         try  {
-            //XXX Mock
-//            MongoCollection<Document> latest52Collection = smcTelemetryDB.getCollection("latest_52_1231_289");
-//            latest52Collection.find().into(docs);
+            MongoCollection<Document> targetCollection = db.getCollection(targetCollectionName);
 
-            MongoCollection<Document> targetCollection = getTargetCollection(db);
-
-            //XXX
-//            List<Document> docs = getSelectedDocuments(targetCollection);
             List<Document> docs = getAllDocuments(targetCollection);
-//            List<Document> docs = getByItemIdAndProperty(targetCollection);
 
             return docs;
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
     }
-
-
-    private static MongoCollection<Document> getTargetCollection(MongoDatabase smcTelemetryDB) {
-        //XXX
-//        String name = String.format("sensor_data_%s", Constants.TARGET_GROUP);
-        String name = String.format("latest_%s_%s_%s", Constants.TARGET_GROUP, Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY_ID);
-        return smcTelemetryDB.getCollection(name);
-    }
-
     public static List<Document> getAllDocuments(MongoCollection<Document> collection) {
         List<Document> docs = new ArrayList<>();
 
         collection.find().into(docs);
-
-        return docs;
-    }
-
-    private static List<Document> getSelectedDocuments(MongoCollection<Document> collection) {
-        List<Document> docs = new ArrayList<>();
-        int l = 100;
-
-        for(ValueType type: ValueType.values())
-            collection.find(eq("type", type))
-                    .limit(l)
-                    .into(docs);
-
-        return docs;
-    }
-
-    public static List<Document> getByItemIdAndProperty(MongoCollection<Document> collection) {
-        List<Document> docs = new ArrayList<>();
-
-        Bson filter = and(
-                eq(Constants.BSON_TYPE_KEY, ValueType.NUMERIC),
-                eq(Constants.BSON_ITEM_ID_KEY, Constants.TARGET_ITEM_ID),
-                eq(Constants.BSON_PROPERTY_KEY, Constants.TARGET_PROPERTY));
-
-        collection.find(filter)
-                .sort(ascending(Constants.BSON_TIMESTAMP_KEY))
-                .into(docs);
 
         return docs;
     }
@@ -104,6 +61,14 @@ public class MongoDbRead {
                 .into(docs);
 
         return docs;
+    }
+
+    //XXX Not used
+    private static MongoCollection<Document> getTargetCollection(MongoDatabase smcTelemetryDB) {
+        //XXX
+//        String name = String.format("sensor_data_%s", Constants.TARGET_GROUP);
+        String name = String.format("latest_%s_%s_%s", Constants.TARGET_GROUP, Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY_ID);
+        return smcTelemetryDB.getCollection(name);
     }
 
     //XXX Not used
@@ -151,10 +116,5 @@ public class MongoDbRead {
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static MongoCollection<Document> getLatestTargetCollection(MongoDatabase smcTelemetryDB) {
-        String name = String.format("latest_%s_%s_%s", Constants.TARGET_GROUP, Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY_ID);
-        return smcTelemetryDB.getCollection(name);
     }
 }

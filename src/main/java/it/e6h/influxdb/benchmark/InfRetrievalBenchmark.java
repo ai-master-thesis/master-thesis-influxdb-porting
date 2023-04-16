@@ -30,7 +30,7 @@ public class InfRetrievalBenchmark {
     public static void run() throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(InfRetrievalBenchmark.class.getSimpleName())
-                .forks(Constants.InfRetrievalBenchmarkParams.FORKS)
+                .forks(Constants.InfRetrievalBenchmarkParams.FORKS) // 0 for debugging
                 .threads(Constants.InfRetrievalBenchmarkParams.THREADS)
                 .mode(Constants.InfRetrievalBenchmarkParams.MODE)
                 .warmupIterations(Constants.InfRetrievalBenchmarkParams.WARMUP_ITERATIONS)
@@ -45,7 +45,7 @@ public class InfRetrievalBenchmark {
 
     @State(Scope.Benchmark)
     public static class MongoDbConf {
-        public String connectionString = System.getProperty("mongodb.local.uri");
+        public String connectionString = Constants.MONGO_LOCAL_CON_STR;
         public String dbName = Constants.MONGO_DB_LOCAL;
         public String latestCollectionName = String.format("latest_%s_%s_%s",
                 Constants.TARGET_GROUP, Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY_ID);

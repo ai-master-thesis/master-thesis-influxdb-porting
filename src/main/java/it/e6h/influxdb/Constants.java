@@ -1,27 +1,32 @@
 package it.e6h.influxdb;
 
+import it.e6h.influxdb.util.Util;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.runner.options.TimeValue;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class Constants {
+    private static Properties secret = Util.loadPropertiesFromClasspath("secret.properties");
+
     public static final int CL_ARGS_N = 1;
 
     public static final String LOG_MARKER_STRING = "E6H";
     public static final Marker LOG_MARKER = MarkerFactory.getMarker(LOG_MARKER_STRING);
 
-    public static final char[] TOKEN = "XVmIGzd8vvXlPvIuDD6KXYMo-UOGoWd8yOYBW2HhwOQ3Bhoq6_8Krs-1ix-lWH38_Cs4uSglALamXkZETJXjgg==".toCharArray();
-    public static final String ORG = "E6H";
-    public static final String BUCKET = "sensor_data_52";
-    public static final String BUCKET_EX = "ex";
-    public static final String BUCKET_FILTER = "sensor_data_52_1233_Photocell";
-    public static final String BUCKET_LATEST = "latest_52_1233_5";
+    public static final String TARGET_GROUP = "52";
+    public static final Long TARGET_ITEM_ID = 1233L;
+    public static final String TARGET_PROPERTY = "Photocell";
+    public static final Long TARGET_PROPERTY_ID = 5L;
+    public static final int TARGET_RECORDS_N = 100;
 
-    public static final String HOST = "http://localhost:8086";
+    // MongoDB
 
+    public static final String MONGO_REMOTE_CON_STR = secret.getProperty("mongodb.remote.uri");
+    public static final String MONGO_LOCAL_CON_STR = secret.getProperty("mongodb.local.uri");
     public static final String MONGO_DB_REMOTE = "smactory-telemetry";
     public static final String BSON_ID_KEY = "_id";
     public static final String BSON_ITEM_ID_KEY = "itemId";
@@ -32,13 +37,19 @@ public class Constants {
 
     public static final String MONGO_DB_LOCAL = "smc-telemetry";
 
-    public static final String TARGET_GROUP = "52";
-    public static final Long TARGET_ITEM_ID = 1233L;
-    public static final String TARGET_PROPERTY = "Photocell";
-    public static final Long TARGET_PROPERTY_ID = 5L;
-    public static final int TARGET_RECORDS_N = 100;
+    // InfluxDB
+
+    public static final char[] TOKEN = secret.getProperty("influxdb.local.token").toCharArray();
+    public static final String ORG = "E6H";
+    public static final String BUCKET = "sensor_data_52";
+    public static final String BUCKET_EX = "ex";
+    public static final String BUCKET_FILTER = "sensor_data_52_1233_Photocell";
+    public static final String BUCKET_LATEST = "latest_52_1233_5";
+
+    public static final String HOST = "http://localhost:8086";
 
     // Benchmark
+
     public static final class InfRetrievalBenchmarkParams {
         public static final int FORKS = 1;
         public static final int THREADS = 1;
