@@ -6,8 +6,9 @@ import java.util.Optional;
 public enum BenchmarkMenuItem {
     INVALID(0),
     INFORMATION_RETRIEVAL(1),
-    MONGO_RESOURCE_CONSUMPTION(2),
-    INFLUX_RESOURCE_CONSUMPTION(3);
+    INFORMATION_RETRIEVAL_RANDOM(2),
+    MONGO_RESOURCE_CONSUMPTION(3),
+    INFLUX_RESOURCE_CONSUMPTION(4);
 
     public final int numValue;
 

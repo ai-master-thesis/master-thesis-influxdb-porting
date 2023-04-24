@@ -1,5 +1,7 @@
 package it.e6h.influxdb.benchmark;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.FluxRecord;
 import com.mongodb.client.MongoClient;
@@ -11,6 +13,7 @@ import it.e6h.influxdb.InfluxDbRead;
 import it.e6h.influxdb.datasource.MongoDbConnection;
 import it.e6h.influxdb.datasource.MongoDbRead;
 import it.e6h.influxdb.model.ValueType;
+import it.e6h.influxdb.util.Util;
 import org.bson.Document;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
@@ -20,16 +23,19 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class InfRetrievalBenchmark {
-    private static Logger logger = LoggerFactory.getLogger(InfRetrievalBenchmark.class);
+public class InfRetrievalRandBenchmark {
+    private static Logger logger = LoggerFactory.getLogger(InfRetrievalRandBenchmark.class);
     private static Long exeCounter = 0L;
     private static Long exeCounterTotal = 0L;
 
     public static void run() throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(InfRetrievalBenchmark.class.getSimpleName())
+                .include(InfRetrievalRandBenchmark.class.getSimpleName())
                 .forks(Constants.InfRetrievalBenchmarkParams.FORKS) // 0 for debugging
                 .threads(Constants.InfRetrievalBenchmarkParams.THREADS)
                 .mode(Constants.InfRetrievalBenchmarkParams.MODE)
@@ -47,9 +53,33 @@ public class InfRetrievalBenchmark {
     public static class InfRetrievalBenchmarkState {
         String mongoConnectionString = Constants.MONGO_LOCAL_CON_STR;
         String mongoDbName = Constants.MONGO_DB_LOCAL;
-        String latestDatasetName = String.format("latest_%s_%s_%s",
-                Constants.TARGET_GROUP, Constants.TARGET_ITEM_ID, Constants.TARGET_PROPERTY_ID);
         String sensorDataDatasetName = String.format("sensor_data_%s", Constants.TARGET_GROUP);
+        List<ItemProperties> itemPropertiesList;
+        ItemProperty itemProperty;
+
+        @Setup(Level.Trial)
+        public void atBenchmarkStart() {
+            final JsonMapper mapper = new JsonMapper();
+            final File input = new File(
+                    InfluxDbRead.class.getClassLoader().getResource("sensor_data_52-propByItem.jsonl").getFile()
+            );
+
+            itemPropertiesList = new ArrayList<>();
+            try (MappingIterator<ItemProperties> it = mapper.readerFor(ItemProperties.class)
+                    .readValues(input)) {
+                while (it.hasNextValue()) {
+                    ItemProperties v = it.nextValue();
+                    itemPropertiesList.add(v);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Setup(Level.Invocation)
+        public void atInvocationStart() {
+            itemProperty = Util.getRandomItemProperty(itemPropertiesList);
+        }
 
         @TearDown(Level.Invocation)
         public void atInvocationEnd() {
@@ -73,32 +103,17 @@ public class InfRetrievalBenchmark {
     }
 
     @Benchmark
-    public static List<Document> mongoReadFromLatest(InfRetrievalBenchmarkState state) {
-        try  {
-            MongoClient client = MongoDbConnection.connect(state.mongoConnectionString);
-            MongoDatabase db = client.getDatabase(state.mongoDbName);
-            MongoCollection<Document> collection = db.getCollection(state.latestDatasetName);
-
-            List<Document> docs = MongoDbRead.getAllDocuments(collection);
-//            logger.debug(Constants.LOG_MARKER, "Number of read BSON documents = " + docs.size());
-
-            return docs;
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Benchmark
-    public static List<Document> mongoReadFromSensorData(InfRetrievalBenchmarkState state) {
+    public static List<Document> mongoReadFromSensorDataRand(InfRetrievalBenchmarkState state) {
         try  {
             MongoClient client = MongoDbConnection.connect(state.mongoConnectionString);
             MongoDatabase db = client.getDatabase(state.mongoDbName);
             MongoCollection<Document> collection = db.getCollection(state.sensorDataDatasetName);
 
-            List<Document> docs = MongoDbRead.getTopByItemIdAndProperty(collection,
-                    ValueType.NUMERIC,
-                    Constants.TARGET_ITEM_ID,
-                    Constants.TARGET_PROPERTY);
+            List<Document> docs = MongoDbRead.getTopByItemIdAndProperty(
+                    collection,
+                    null,
+                    state.itemProperty.getItemId(),
+                    state.itemProperty.getProperty());
 //            logger.debug(Constants.LOG_MARKER, "Number of read BSON documents = " + docs.size());
 
             return docs;
@@ -108,28 +123,15 @@ public class InfRetrievalBenchmark {
     }
 
     @Benchmark
-    public static List<FluxRecord> influxReadFromLatest(InfRetrievalBenchmarkState state) {
-        try  {
-            InfluxDBClient client = InfluxDbConnection.connect(
-                    Constants.HOST, Constants.TOKEN, state.latestDatasetName, Constants.ORG);
-
-            List<FluxRecord> records = InfluxDbRead.getAll(client, state.latestDatasetName);
-//            logger.debug(Constants.LOG_MARKER, "Number of read Flux records = " + records.size());
-
-            return records;
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Benchmark
-    public static List<FluxRecord> influxReadFromSensorData(InfRetrievalBenchmarkState state) {
+    public static List<FluxRecord> influxReadFromSensorDataRand(InfRetrievalBenchmarkState state) {
         try  {
             InfluxDBClient client = InfluxDbConnection.connect(
                     Constants.HOST, Constants.TOKEN, state.sensorDataDatasetName, Constants.ORG);
 
-            List<FluxRecord> records = InfluxDbRead.getTopByItemIdAndProperty(client, state.sensorDataDatasetName);
-//            logger.debug(Constants.LOG_MARKER, "Number of read Flux records = " + records.size());
+            List<FluxRecord> records = InfluxDbRead.getTopByItemIdAndPropertyRC(
+                    client, state.sensorDataDatasetName,
+                    state.itemProperty.getItemId(), state.itemProperty.getProperty()
+            );
 
             return records;
         } catch(Exception e) {

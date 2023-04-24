@@ -4,6 +4,7 @@ import com.influxdb.client.InfluxDBClient;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import it.e6h.influxdb.benchmark.InfRetrievalBenchmark;
+import it.e6h.influxdb.benchmark.InfRetrievalRandBenchmark;
 import it.e6h.influxdb.benchmark.InfluxResConsumptionBenchmark;
 import it.e6h.influxdb.benchmark.MongoResConsumptionBenchmark;
 import it.e6h.influxdb.datasource.MongoDbConnection;
@@ -46,6 +47,9 @@ public class Main {
                 break;
             case BENCHMARK_INF_RET:
                 InfRetrievalBenchmark.run();
+                break;
+            case BENCHMARK_INF_RET_RAND:
+                InfRetrievalRandBenchmark.run();
                 break;
             case BENCHMARK_RES_CONS_MONGO:
                 MongoResConsumptionBenchmark.run();
@@ -93,6 +97,8 @@ public class Main {
                 switch(benchmarkType) {
                     case INFORMATION_RETRIEVAL:
                         return BENCHMARK_INF_RET;
+                    case INFORMATION_RETRIEVAL_RANDOM:
+                        return BENCHMARK_INF_RET_RAND;
                     case MONGO_RESOURCE_CONSUMPTION:
                         return BENCHMARK_RES_CONS_MONGO;
                     case INFLUX_RESOURCE_CONSUMPTION:

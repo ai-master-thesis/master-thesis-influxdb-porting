@@ -53,11 +53,11 @@ public class Constants {
     public static final class InfRetrievalBenchmarkParams {
         public static final int FORKS = 1;
         public static final int THREADS = 1;
-        public static final Mode MODE = Mode.SingleShotTime;
+        public static final Mode MODE = Mode.AverageTime;
         public static final int WARMUP_ITERATIONS = 1;
-        public static final int WARMUP_BATCH_SIZE = 10;
+        public static final TimeValue WARMUP_TIME = new TimeValue(10L, TimeUnit.SECONDS);
         public static final int MEASUREMENT_ITERATIONS = 3;
-        public static final int MEASUREMENT_BATCH_SIZE = 5;
+        public static final TimeValue MEASUREMENT_TIME = new TimeValue(20L, TimeUnit.SECONDS);;
         public static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
     }
     public static final class ResConsumptionBenchmarkParams {
