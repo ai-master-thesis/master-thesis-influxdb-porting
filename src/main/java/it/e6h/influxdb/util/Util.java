@@ -1,7 +1,12 @@
 package it.e6h.influxdb.util;
 
+import it.e6h.influxdb.benchmark.ItemProperties;
+import it.e6h.influxdb.benchmark.ItemProperty;
+
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Util {
@@ -72,5 +77,17 @@ public class Util {
         }
 
         return selection;
+    }
+
+    public static ItemProperty getRandomItemProperty(List<ItemProperties> itemPropertiesList) {
+        Random rand = new Random();
+        int itemIdIndex = rand.nextInt(itemPropertiesList.size());
+        ItemProperties itemProperties = itemPropertiesList.get(itemIdIndex);
+        Long itemId = itemProperties.getItemId();
+        List<String> properties = itemProperties.getProperties();
+        int propertyIndex = rand.nextInt(properties.size());
+        String property = properties.get(propertyIndex);
+
+        return new ItemProperty(itemId, property);
     }
 }
